@@ -1,13 +1,16 @@
 from pygame import mixer
 import time
+import pathlib
 
+path = pathlib.Path(__file__).parent.resolve()._str
+breakpoint()
 class Metronome:
     beats_pm = 150
     beats_ps = 1/(beats_pm/60)
     measure = 4
     mixer.init()
-    beep = mixer.Sound("sounds/tap_low.wav")
-    beep_high = mixer.Sound("sounds/tap.wav")
+    beep = mixer.Sound(path + "/sounds/tap_low.wav")
+    beep_high = mixer.Sound(path + "/sounds/tap.wav")
     playing = False
     beat_count = 0
     bar_count = 0
@@ -27,7 +30,7 @@ class Metronome:
             cls.bar_count += 1
     
     @classmethod
-    def live_test(cls, length):
+    def live_test(cls, length=5):
         from threading import Thread
 
         test = Thread(target=cls.play, args=())
@@ -39,5 +42,5 @@ class Metronome:
         return cls.beat_count, cls.bar_count
 
 if __name__ == "__main__":
-    beats, bars = Metronome.live_test(5)
+    beats, bars = Metronome.live_test()
     print(f"{beats} beats played, {bars} bars played")
