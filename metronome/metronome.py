@@ -3,17 +3,20 @@ import time
 import pathlib
 
 path = pathlib.Path(__file__).parent.resolve()._str
-breakpoint()
+
+
 class Metronome:
     beats_pm = 150
-    beats_ps = 1/(beats_pm/60)
     measure = 4
     mixer.init()
     beep = mixer.Sound(path + "/sounds/tap_low.wav")
     beep_high = mixer.Sound(path + "/sounds/tap.wav")
     playing = False
     beat_count = 0
-    bar_count = 0
+
+    @classmethod
+    def beats_ps(cls):
+        return float(1/(cls.beats_pm/60))
 
     @classmethod
     def play(cls):
@@ -26,8 +29,7 @@ class Metronome:
                     cls.beep_high.play()
                 cls.beep.play()
                 cls.beat_count += 1
-                time.sleep(cls.beats_ps)
-            cls.bar_count += 1
+                time.sleep(cls.beats_ps())
     
     @classmethod
     def live_test(cls, length=5):
@@ -35,12 +37,12 @@ class Metronome:
 
         test = Thread(target=cls.play, args=())
         test.start()
+
         time.sleep(length)
         cls.playing = False
         while test.is_alive():
             time.sleep(0.1)
-        return cls.beat_count, cls.bar_count
+        return f"{cls.beat_count} beats played."
 
 if __name__ == "__main__":
-    beats, bars = Metronome.live_test()
-    print(f"{beats} beats played, {bars} bars played")
+    beats = Metronome.live_test()
